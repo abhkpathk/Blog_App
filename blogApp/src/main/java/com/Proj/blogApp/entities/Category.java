@@ -3,6 +3,8 @@ package com.Proj.blogApp.entities;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="categories")
@@ -20,6 +22,9 @@ public class Category {
     @Size(min=10)
     @Column(name = "description",length=100,nullable=false)
     private String CategoryDesc;
+
+    @OneToMany(mappedBy = "category",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Post> post = new ArrayList<>();
 
     public Category() {
 

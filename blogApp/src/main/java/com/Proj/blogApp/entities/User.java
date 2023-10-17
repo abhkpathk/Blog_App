@@ -1,6 +1,7 @@
 package com.Proj.blogApp.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -18,6 +19,9 @@ public class User {
     private String password;
     @Column
     private String about;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Post> post;
 
     public User() {
 
