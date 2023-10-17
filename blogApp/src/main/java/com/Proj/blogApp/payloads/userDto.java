@@ -1,11 +1,23 @@
 package com.Proj.blogApp.payloads;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class userDto {
 
     private int id;
+    @NotEmpty
+    @Size(min=4,message = "size must be min of 4")
     private String name;
+    @Email(message = "Email address is not valid")
     private String email;
+
+    @NotEmpty
+    @Size(min=3,max=10,message = "size must be min 4 and max 10 chars!")
     private String password;
+    @NotEmpty
     private String about;
 
     public userDto() {
