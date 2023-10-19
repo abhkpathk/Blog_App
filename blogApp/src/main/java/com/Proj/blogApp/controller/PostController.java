@@ -40,9 +40,24 @@ public class PostController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<PostDto>> getAllPost()
+    public ResponseEntity<List<PostDto>> getAllPost(@RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber ,
+                                                    @RequestParam(value = "pageSize",defaultValue = "2",required = false) Integer pageSize)
     {
-        List<PostDto> allPost = this.postServiceImpl.getAllPost();
+        List<PostDto> allPost = this.postServiceImpl.getAllPost(pageNumber,pageSize);
+        return ResponseEntity.ok(allPost);
+    }
+
+    @GetMapping("/getPostbyUser/{UserId}")
+    public ResponseEntity<List<PostDto>> getPostByUset(@PathVariable Integer UserId)
+    {
+        List<PostDto> allPost = this.postServiceImpl.getPostByUser(UserId);
+        return ResponseEntity.ok(allPost);
+    }
+
+    @GetMapping("/getPostbyCategory/{CategoryId}")
+    public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable Integer CategoryId)
+    {
+        List<PostDto> allPost = this.postServiceImpl.getPostByCategory(CategoryId);
         return ResponseEntity.ok(allPost);
     }
 }
