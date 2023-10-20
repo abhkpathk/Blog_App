@@ -5,6 +5,7 @@ import com.Proj.blogApp.entities.Post;
 import com.Proj.blogApp.entities.User;
 import com.Proj.blogApp.exceptions.ResourceNotFoundException;
 import com.Proj.blogApp.payloads.PostDto;
+import com.Proj.blogApp.payloads.PostResponse;
 import com.Proj.blogApp.repositories.CategoryRepo;
 import com.Proj.blogApp.repositories.PostRepo;
 import com.Proj.blogApp.repositories.userRepo;
@@ -78,7 +79,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPost(Integer pageNumber,Integer pageSize) {
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
 
         Pageable p= PageRequest.of(pageNumber,pageSize);
 
@@ -87,8 +88,14 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = pagepost.getContent();
 
         List<PostDto> postdtos = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        PostResponse postRes=new PostResponse();
+        postRes.setContent(postdtos);
+        postRes.setPageNumber(pagepost.getNumber());
+        postRes.setPageSize(pagepost.getSize());
+        postRes.setTotalElemnt(pagepost.getTotalPages());
+        postRes.setTotalpages(pagepost.getTotalPages());
 
-        return postdtos;
+        return postRes;
     }
 
     @Override
@@ -96,27 +103,48 @@ public class PostServiceImpl implements PostService {
         Post post2 =this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","postId",postId));
         //List<Post> posts =this.postRepo.findById(post2);
        // List<PostDto> postdtos = posts.stream().map((post) -> this.modelMapper.map(posts, PostDto.class)).collect(Collectors.toList());
+
+
         PostDto postDtos = this.modelMapper.map(post2, PostDto.class);
         return postDtos;
     }
 
     @Override
-    public List<PostDto> getPostByUser(Integer userId) {
+    public PostResponse getPostByUser(Integer userId,int pageNumber, int pageSize) {
+        Pageable p= PageRequest.of(pageNumber,pageSize);
         User user =this.userrepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("USer","userId",userId));
-        List<Post> posts =this.postRepo.findByUser(user);
-        List<PostDto> postdtos = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        //List<Post> posts =this.postRepo.findByUser(user);
 
-        return postdtos;
+
+        Page<Post> pagepost =  this.postRepo.findByUser(user,p);
+        List<Post> posts = pagepost.getContent();
+
+        List<PostDto> postdtos = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        PostResponse postRes =new PostResponse();
+
+        postRes.setContent(postdtos);
+        postRes.setPageNumber(pagepost.getNumber());
+        postRes.setPageSize(pagepost.getSize());
+        postRes.setTotalElemnt((int) pagepost.getTotalElements());
+        postRes.setTotalpages(pagepost.getTotalPages());
+        return postRes;
     }
 
     @Override
-    public List<PostDto> getPostByCategory(Integer categoryId) {
-
+    public PostResponse getPostByCategory(Integer categoryId,Integer pageNumber,Integer pageSize) {
+        Pageable p= PageRequest.of(pageNumber,pageSize);
         Category category =this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","CategoryId",categoryId));
-        List<Post> posts =this.postRepo.findByCategory(category);
+        Page<Post> pagepost =this.postRepo.findByCategory(category,p);
+        List<Post> posts=pagepost.getContent();
         List<PostDto> postdtos = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+        PostResponse postRes =new PostResponse();
 
-        return postdtos;
+        postRes.setContent(postdtos);
+        postRes.setPageNumber(pagepost.getNumber());
+        postRes.setPageSize(pagepost.getSize());
+        postRes.setTotalElemnt((int) pagepost.getTotalElements());
+        postRes.setTotalpages(pagepost.getTotalPages());
+        return postRes;
 
     }
 
